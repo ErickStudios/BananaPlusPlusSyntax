@@ -1,0 +1,53 @@
+{
+    "funcion global": {
+        "prefix" : "bppglobfn",
+        "body" : [
+            "out function MiFuncion(argumento:tipo)",
+            "{",
+            "   ${3:// tu codigo}",
+            "}"
+        ],
+        "description": "funcion global"
+    },
+    "funcion local": {
+        "prefix" : "bppfn",
+        "body" : [
+            "function MiFuncion(argumento:tipo)",
+            "{",
+            "   ${3:// tu codigo}",
+            "}"
+        ],
+        "description": "funcion local"
+    },
+    "creacion de variable global": {
+        "prefix": "bppcrtglobvar",
+        "body": [
+            "out ${3:Nombre} = ${4:Valor};"
+        ],
+        "description": "crea una variable global"
+    },
+    "creacion de variable local": {
+        "prefix": "bppcrtbvar",
+        "body": [
+            "${3:Nombre} = ${4:Valor};"
+        ],
+        "description": "crea una variable local"
+    },
+    "objeto" : {
+        "prefix" : "bppobj",
+        "body" : [
+            "// describe que hace",
+            "out function ${3:Nombre}.new(this, parametro1)",
+            "{",
+            "   // describe esta propiedad, cambiala, y/o eliminala",
+            "   out %{this}%.propiedad1 = %{parametro1}%;",
+            "   // describe esta propiedad, cambiala, y/o eliminala",
+            "   out function %{this}%.metodo()",
+            "   {",
+            "       // ...",
+            "   }",
+            "}"
+        ],
+        "description": "crea una clase"
+    }
+}

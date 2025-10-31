@@ -1,0 +1,89 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Banana++",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+		},
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#numbers"
+		},
+		{
+			"include": "#params"
+		},
+		{
+			"include": "#functions"
+		},
+		{
+			"name": "storage.type.cs",
+			"match": "(?<=\\w+:)\\s*\\w+"
+		},
+		{
+			"include": "#DefaultClasses"
+		},
+		{
+			"name": "variable",
+			"match": "\\w+"
+		}
+	],
+	"repository": {
+		"DefaultClasses" : {
+			"comment": "clases que vienen ya por defecto en el lenguaje Banana++",
+			"match": "\\b(Sys|Lang)\\b"
+		},
+		"functions": {
+			"name": "entity.name.function.bananaplusplus",
+			"match": "\\b\\w+(?=\\()"
+		},
+		"params" : {
+			"name": "variable.parameter.bananaplusplus",
+			"begin": "%{",
+			"end": "}%"
+		},
+		"comments":{
+			"name": "comment.line.bananaplusplus",
+			"begin": "//",
+			"end": "\n",
+			"patterns": [
+				{
+				"name": "storage.type.cs",
+				"match": "(?<=:)\\s*\\w+"
+				},
+				{
+					"name":"comment.block.documentation.bananaplusplus",
+					"begin": "\\(\\(\\(",
+					"end": "\\)\\)\\)"
+				}
+			]
+		},
+		"keywords": {
+			"comment": "las palabras clave",
+			"patterns": [{
+				"name": "keyword.control.bananaplusplus",
+				"match": "\\b(function|for|if|else|then|out|Sys|return)\\b"
+			}]
+		},
+		"strings": {
+			"name": "string.quoted.double.bananaplusplus",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.bananaplusplus",
+					"match": "\\\\."
+				}
+			]
+		},
+		"numbers": {
+			"name" : "constant.numeric.bananaplusplus",
+			"match": "-?\\b\\d+(\\.\\d+)?\\b"
+		}
+	},
+	"scopeName": "source.bpp"
+}
