@@ -3,6 +3,7 @@
   "displayName": "Banana++ Support",
   "description": "soporte para Banana++ en vscode",
   "version": "0.0.1",
+  "main": "main.js",
   "engines": {
     "vscode": "^1.105.0"
   },
@@ -10,16 +11,16 @@
     "Programming Languages"
   ],
   "contributes": {
-    "snippets": [
-      {
-        "language": "bananaplusplus",
-        "path": "./snippets/bananaplusplus.code-snippets"
-      }
-    ],
+      "completionItemProvider": [
+        {
+          "language": "bananaplusplus",
+          "triggerCharacters": ["@", ".", "#"]
+        }
+      ],
     "languages": [{
       "id": "bananaplusplus",
       "aliases": ["Banana++", "bananaplusplus"],
-      "extensions": [".bpp"],
+      "extensions": [".bpp", ".b++"],
       "configuration": "./language-configuration.json"
     }],
     "grammars": [{

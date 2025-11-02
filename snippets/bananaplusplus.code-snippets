@@ -12,7 +12,7 @@
     "funcion local": {
         "prefix" : "bppfn",
         "body" : [
-            "function MiFuncion(argumento:tipo)",
+            "function ${2:Nombre}({$1:argumentos})",
             "{",
             "   ${3:// tu codigo}",
             "}"
@@ -49,5 +49,19 @@
             "}"
         ],
         "description": "crea una clase"
+    },
+    "path separator" : {
+        "prefix": "bpppathsep",
+        "body": [
+            "Sys.PathSep"
+        ],
+        "description": "separador de nivel de directorios"
+    },
+    "path delimiter" : {
+        "prefix": "bpppathdelimiter",
+        "body": [
+            "Sys.PathDelimiter"
+        ],
+        "description": "separador de directorios"
     }
 }

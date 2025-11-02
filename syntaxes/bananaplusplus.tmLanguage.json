@@ -21,6 +21,9 @@
 			"include": "#functions"
 		},
 		{
+			"include": "#OptionalKeywords"
+		},
+		{
 			"name": "storage.type.cs",
 			"match": "(?<=\\w+:)\\s*\\w+"
 		},
@@ -35,7 +38,13 @@
 	"repository": {
 		"DefaultClasses" : {
 			"comment": "clases que vienen ya por defecto en el lenguaje Banana++",
-			"match": "\\b(Sys|Lang)\\b"
+			"name" : "entity.name.class.bananaplusplus",
+			"match": "\\b(Sys|Lang|require)\\b"
+		},
+		"OptionalKeywords" : {
+			"comment": "estas palabras clave son opcionales en el lenguaje y estandart, por lo que se colorean en este formato, aunque pueden no estar dependiendo de la desicion de que librerias usara el desarrollador",
+			"name": "keyword.other",
+			"match": "\\b(null|const|Array|String|SysInternal|print|readline)\\b"
 		},
 		"functions": {
 			"name": "entity.name.function.bananaplusplus",
@@ -45,6 +54,9 @@
 			"name": "variable.parameter.bananaplusplus",
 			"begin": "%{",
 			"end": "}%"
+		},
+		"multiline_comments":{
+			
 		},
 		"comments":{
 			"name": "comment.line.bananaplusplus",
@@ -66,7 +78,7 @@
 			"comment": "las palabras clave",
 			"patterns": [{
 				"name": "keyword.control.bananaplusplus",
-				"match": "\\b(function|for|if|else|then|out|Sys|return)\\b"
+				"match": "\\b(function|import|for|if|else|then|out|Sys|return)\\b"
 			}]
 		},
 		"strings": {
