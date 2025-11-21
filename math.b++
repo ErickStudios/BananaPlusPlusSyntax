@@ -1,0 +1,53 @@
+//(((expone algo como exponente)))
+out function math.pow(x:num, exp:num, Out:num)
+{
+    out %{Out}% = %{x}%;
+    out %{Out}% ^= %{exp}%;
+}
+out function math.abs(num:num, Out:num) {
+    if Syntax["%{num}%<0"] then {
+        out %{Out}% = 0;
+        out %{Out}% += %{num}%;
+    }
+    else { 
+        out %{Out}% = %{num}%;
+    }
+}
+out function math.exp(x:num, Out:num) 
+{
+    out %{Out}% = math.E;
+    math.pow(%{Out}%, %{x}%);
+}
+//(((logaritmo)))
+out function math.Log(x:num, Out:num) {
+    if Syntax["%{x}%==1"] then { out %{Out}% = 0; }
+    else {
+        y = %{x}%;
+        y -= 1;
+        tolerance = 1e-12;
+        maxIterations = 100;
+        index = 0;
+
+        for (maxIterations, index)
+        {
+            math.exp(y, eToY);
+            delta1 = eToY; delta1 -= %{x}%; delta = delta1; delta /= eToY;
+            y -= delta;
+
+            math.abs(delta, deltaabs);
+
+            if Syntax["deltaabs<tolerance"] then
+            {
+                index += maxIterations;
+            }
+
+            index += 1;
+        }
+
+    out %{Out}% = y;
+    }
+}
+//(((circunferencia/PI)))
+out math.PI = 3.141592653589793;
+//(((el exponencial)))
+out math.E = 2.718281828459045;

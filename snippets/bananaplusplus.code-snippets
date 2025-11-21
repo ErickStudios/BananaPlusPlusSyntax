@@ -57,6 +57,11 @@
         ],
         "description": "separador de nivel de directorios"
     },
+    "constructor" :{
+        "prefix": "bppobjins",
+        "body": "${1:Clase}.new(${2:NombreInstancia}, ${3:Argumentos});",
+        "description": "define una instancia de una clase"
+    },
     "path delimiter" : {
         "prefix": "bpppathdelimiter",
         "body": [

@@ -3,6 +3,7 @@
   "displayName": "Banana++ Support",
   "description": "soporte para Banana++ en vscode",
   "version": "0.0.1",
+  "publisher": "ErickCraftStudios",
   "main": "main.js",
   "engines": {
     "vscode": "^1.105.0"
@@ -15,6 +16,19 @@
         {
           "language": "bananaplusplus",
           "triggerCharacters": ["@", ".", "#"]
+        }
+      ],
+      "commands":[
+          {
+            "command": "bananaplusplus.revisarModulo",
+            "title": "Revisar Módulo",
+            "category": "Banana++"
+          }
+      ],
+      "snippets": [
+        {
+          "language": "bananaplusplus",
+          "path": "./snippets/bananaplusplus.code-snippets"
         }
       ],
     "languages": [{

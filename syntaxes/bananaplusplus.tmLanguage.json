@@ -24,8 +24,15 @@
 			"include": "#OptionalKeywords"
 		},
 		{
+			"include": "#ClassesDefOrUsage"
+		},
+		{
 			"name": "storage.type.cs",
 			"match": "(?<=\\w+:)\\s*\\w+"
+		},
+		{
+			"name": "storage.type.cs",
+			"match": "(?<=\\.\\.\\.:)\\s*\\w+"
 		},
 		{
 			"include": "#DefaultClasses"
@@ -39,12 +46,17 @@
 		"DefaultClasses" : {
 			"comment": "clases que vienen ya por defecto en el lenguaje Banana++",
 			"name" : "entity.name.class.bananaplusplus",
-			"match": "\\b(Sys|Lang|require)\\b"
+			"match": "\\b(Sys|Lang|require|delete)\\b"
 		},
 		"OptionalKeywords" : {
 			"comment": "estas palabras clave son opcionales en el lenguaje y estandart, por lo que se colorean en este formato, aunque pueden no estar dependiendo de la desicion de que librerias usara el desarrollador",
 			"name": "keyword.other",
-			"match": "\\b(null|const|Array|String|SysInternal|print|readline)\\b"
+			"match": "\\b(const)\\b"
+		},
+		"ClassesDefOrUsage": {
+			"comment": "el uso de las clases",
+			"name" : "entity.name.class.bananaplusplus",
+			"match": "\\b\\w+(?=\\.new\\()"
 		},
 		"functions": {
 			"name": "entity.name.function.bananaplusplus",
@@ -68,9 +80,31 @@
 				"match": "(?<=:)\\s*\\w+"
 				},
 				{
+					"name": "storage.type.cs",
+					"match": "\\w+(?=:\\s*\\w+)"
+				},
+				{
+					"name": "storage.type.cs",
+					"match": "(?<=\\.\\.\\.:)\\s*\\w+"
+				},
+				{
 					"name":"comment.block.documentation.bananaplusplus",
 					"begin": "\\(\\(\\(",
-					"end": "\\)\\)\\)"
+					"end": "\\)\\)\\)",
+					"patterns": [
+						{
+						"name": "storage.type.cs",
+						"match": "(?<=\\w+:)\\s*\\w+"
+						},		
+						{
+							"name": "variable",
+							"match": "\\w+(?=:\\s*\\w+)"
+						},
+						{
+							"name": "storage.type.cs",
+							"match": "(?<=\\.\\.\\.:)\\s*\\w+"
+						}
+					]
 				}
 			]
 		},

@@ -1,0 +1,659 @@
+//(((/**
+* libreria std de Banana++
+*/)))
+//(((el tipo de numero)))
+out num = "-?\\b\\d+(\\.\\d+)?\\b";
+//(((el tipo de booleano)))
+out boolean = "\\b(true|false)\\b";
+//(((el tipo de llaves)))
+out key = "\\w+";
+//(((tipos de cosas)))
+out lang_type = key;
+//(((el tipo de cualquiera)))
+out any = ".*";
+// requerir variables que tienen que estar, y que no se declaran por codigo
+require Sys.PathSep Sys.PathDelimiter;
+//(((representa nada en absoluto)))
+const null = "";
+//(((la version de la libreria std)))
+stdlib_ver = 1.5;
+//(((limpia la pantalla)))
+function clear()
+{
+    Sys.Clear //
+}
+//(((funcion para instanciar un valor de enum)))
+out function EnumValue.new(this:key, value:num, str:str)
+{
+    // el tipo
+    out %{this}%.__type__ = "EnumValue";
+    //(((la descripcion o representacion visual de %{this}%)))
+    out %{this}%.Str = %{str}%;
+    //(((el valor de %{this}%)))
+    out %{this}%.Value = %{value}%;
+}
+//(((funcion para instanciar un valor booleano)))
+out function Boolean.new(this:key, Val:boolean)
+{
+    // el tipo
+    out %{this}%.__type__ = "Boolean";
+    //(((representa el valor interno de %{this}%)))
+    out %{this}% = %{Val}%; 
+    //(((esta funcion invierte el valor interno de %{this}%)))
+    out function %{this}%.not()
+    {
+        if Syntax["%{this}%==true"] then { out %{this}% = "false"; }
+        else { out %{this}% = "true"; }
+    }
+    //((esta funcion ))
+    out function %{this}%.and(other:boolean)
+    {
+        TrueTwo = "true";
+        // comparar los dos si son verdadero
+        if Syntax["%{this}%==false"] then { TrueTwo = False; } if Syntax["%{other}%==false"] then { TrueTwo = False; }
+        // devolver el resultado
+        out %{this}% = TrueTwo;
+    }
+    if Syntax["%{Val}%==true"] then { }
+    else { if Syntax["%{Val}%==false"] then { } else { Sys.Warn "El valor es invalido" } }
+}
+//(((obtiene un elemento de un array desde fuera)))
+out function Array.GetFrom(array:Array, index:num, reton:out)
+{
+    out %{reton}% = %{array}%;
+    out %{reton}% $= "[";
+    out %{reton}% $= %{index}%;
+    out %{reton}% $= "]";
+    out %{reton}% = DSyntax[Syntax[%{reton}%]];
+}
+//(((estableze un elemento de un array desde fuera)))
+out function Array.SetTo(array:Array, index:num, value:any)
+{
+    pparse = %{array}%;
+    pparse $= "[";
+    pparse $= %{index}%;
+    pparse $= "]";
+    out @get[pparse] = %{value}%;
+}
+//(((instancia el tipo de array, un array es una lista de elementos
+que puede ser indexados, cambiados y contables)))
+out function Array.new(this:key, Ty:lang_type, ...)
+{
+    //(((la cantidad de elementos de %{this}%)))
+    out #%{this}% = 0;
+    //(((añade un elemento hasta la ultima posicion de la lista %{this}%)))
+    out function %{this}%.push(item:%{Ty}%, ...)
+    {
+        // añade el elemento a la lista
+        out %{this}%[@get[#%{this}%]] = %{item}%;
+        // incrementa la longitud
+        out #%{this}% += 1;
+        index = 0;
+        for (#Lang.DotDotDot)
+        {
+            Array.GetFrom(Lang.DotDotDot, index, prt);            
+            // añade el elemento a la lista
+            out %{this}%[@get[#%{this}%]] = prt;
+            // incrementa la longitud
+            out #%{this}% += 1;
+            index += 1;
+        }
+    }
+    //(((elimina el ultimo elemento de la lista %{this}%)))
+    out function %{this}%.pop()
+    {
+        // decrementa la longitud
+        out #%{this}% -= 1;
+        // setea a null
+        out %{this}%[@get[#%{this}%]] = null;
+    }
+    //(((obtiene un item)))
+    out function %{this}%.get(item:num, Out:Out)
+    {
+        Array.GetFrom(%{this}%, %{item}%, %{Out}%);
+    }
+    //(((estableze un elemento)))
+    out function %{this}%.set(item:num, element:%{Ty}%)
+    {
+        Array.SetTo(%{this}%, %{item}%, %{element}%);
+    }
+    //(((convierte algo a str)))
+    out function %{this}%.ToStr(Out:str)
+    {
+        out %{Out}% = "[ ";
+        index = 0;
+        for (#%{this}%)
+        {
+            Array.GetFrom(%{this}%, index, ab);
+            out %{Out}% $= ab;
+            out %{Out}% $= " ";
+            index += 1;
+        }
+        out %{Out}% $= "]";
+    }
+    index = 0;
+    for (#Lang.DotDotDot)
+    {
+        Array.GetFrom(Lang.DotDotDot, index, prt); //(((añade el elemento a la lista)))
+        out %{this}%[@get[#%{this}%]] = prt; //(((incrementa la longitud)))
+        out #%{this}% += 1; index += 1;
+    }
+}
+//(((contiene las funciones del sistema)))
+out function SysInternal.new(this:key)
+{
+    // el tipo
+    out %{this}%.__type__ = "SysInternal";
+    //(((imprime algo en pantalla)))
+    out function %{this}%.print(Str:str) 
+    {
+         Sys.Out %{Str}% //
+    }
+    //(((lee algo que pondra el usuario)))
+    out function %{this}%.readline(Ask:str, Out:Out[str]) 
+    { 
+        out %{Out}% = Sys.Read[%{Ask}%];
+    }
+}
+//(((el tipo de strings, un string es una secuencia de caracteres como letras y numeros juntos para formar texto)))
+out function String.new(this:key, Str:str)
+{
+    // el tipo
+    out %{this}%.__type__ = "str";
+    //(((contiene el contenido interno de %{this}%)))
+    out %{this}% = %{Str}%;
+    //(((une %{this}% con otro string ya sea instanciado con esta clase o uno plano)))
+    out function %{this}%.join(OtherStr:str)
+    {
+        out %{this}% $= %{OtherStr}%;
+    }
+    //(((extrae una secuencia de texto empezando desde un inicio (que empieza en 0
+     para el primer caracter) y la longitud de la cadena que se extraera, el ultimo
+      parametro es la variable donde retornara el string, esta se instanciara automaticamente 
+      con esta clase)))
+    out function %{this}%.substring(Start:num, Lenstr:num, Out:Out[str])
+    {
+        // empezar el index
+        index = %{Start}%;
+
+        // vaciar la cadena
+        String.new(%{Out}%, "");
+
+        for (%{Lenstr}%)
+        {
+            // obtiene el caracter actual
+            Sys.__str__ = %{this}%; Sys.__char__ = index; Sys.GetChar char
+            // lo une
+            %{Out}%.join(char);
+            // siguiente caracter
+            index += 1;
+        }
+    }
+    //(((verifica si el string %{this}% inicia con una sentencia, que es el primer parametro
+    el segundo es el boolean que retornara true si coincide el inicio y false si no)))
+    out function %{this}%.startswith(Str:str,Out:Boolean)
+    {
+        // obtiene si inicia asi
+        len = Sys.Len[%{Str}%]; %{this}%.substring(0, len, stm); out %{Out}% = Syntax["stm==%{Str}%"];
+    }
+    //(((separa %{this}% en un array mediante un separador que es otro string que contiene
+    el separador, solo se permite caracteres por que se ha probado con otros pero se bugea bien feo,
+    el segundo parametro contiene el nombre del array que retornara)))
+    out function %{this}%.split(Splitter:str, ReturnOn:Array)
+    {
+        out %{this}% $= %{Splitter}%;
+        // la parte actual del string que se usara
+        part = "";
+        // crear array
+        Array.new(%{ReturnOn}%, str);
+        // longitud
+        len = Sys.len[%{this}%];
+        // el indexeador
+        index = 0;
+        // la longitud del separador
+        split_len = Sys.len[%{Splitter}%];
+
+        // indexear
+        for (len)
+        {
+            // obtiene el string
+            Sys.__str__ = %{this}%; Sys.__char__ = index; Sys.GetChar ch
+
+            if Syntax["ch==%{Splitter}%"] then { %{ReturnOn}%.push(part);part = "";} 
+            else { part $= ch; index += 1;}
+        }
+        // poner la parte del array
+        %{ReturnOn}%.push(part);
+        // vaciar la parte actual
+        part = "";
+    }
+    //(((convierte el string en una lista con todos los caracteres que tiene)))
+    out function %{this}%.ToCharArray(Out:array)
+    {
+        // longitud
+        len = Sys.len[%{this}%];
+        // array
+        Array.new(%{Out}%, str);
+        // el index
+        index = 0;
+        for (len)
+        {
+            Sys.__str__ = %{this}%; 
+            Sys.__char__ = index; 
+            Sys.GetChar ch
+            %{Out}%.push(ch);
+            index += 1;
+        }
+    }
+}
+//(((ShellInternal es la clase internal de la shell y los argumentos, para obtenerlos
+y mas funciones del entorno de la shell)))
+out function ShellInternal.new(this:key)
+{
+    // el tipo
+    out %{this}%.__type__ = "ShellInternal";
+    //(((obtiene un argumento con un numero que representa el argumento, el segundo
+    parametro contiene donde retornara el argumento)))
+    out function %{this}%.GetArg(argnum:num, Out:Out[str])
+    {
+        Array.GetFrom(Sys.Argv, argnum, Out);
+    }
+    //(retorna la cantidad de argumentos con las que se le paso al programa)
+    out function %{this}%.GetArgc(Out:Out[str])
+    {
+        out %{Out}% = #Sys.Argv;
+    }
+}
+//(((PathFncs es un tipo que proporciona funciones para el manejo de direcciones dentro
+del disco duro)))
+out function PathFncs.new(this:key)
+{
+    // el tipo
+    out %{this}%.__type__ = "PathFncs";
+    //(((une dos carpetas, el primer parametro es la carpeta con la que se une, el segundo
+    es la segunda carpeta con la que se une, el tercero es donde retornara eso)))
+    out function %{this}%.join(path1:str, path2:str, Out:key)
+    {
+        out %{Out}% = %{path1}%;
+        out %{Out}% $= Sys.PathSep;
+        out %{Out}% $= %{path2}%;
+    }
+}
+//(((LangExtended es para extender el lenguaje con mas funciones logicas)))
+out function LangExtended.new(this:key)
+{
+    // el tipo
+    out %{this}%.__type__ = "LangExtended";
+    //(((while ejecuta algo hasta que una condicion sea falsa)))
+    out function %{this}%.while(condition,code:a)
+    {
+        // el indice
+        index = 0;
+
+        // esperar a que sea 1
+        for (1, index) { if %{condition}% then %{code}% else { index = 1; } }
+    }
+    //(((ejecuta algo)))
+    out function %{this}%.eval(var:a)
+    {
+        @[%{var}%]
+    }
+    //(((detecta el tipo de algo y lo devuelve)))
+    out function %{this}%.typeof(value:a, Out:str)
+    {
+        // para averiguar arrays
+        QuizaArray = "#"; QuizaArray $= %{value}%;
+        // para averiguar numeros
+        QuizaNumero = %{value}%; QuizaNumero += 1;
+        // verificar el tipo
+        QuizasTieneTipoExplicito = %{value}%; QuizasTieneTipoExplicito $= ".__type__";
+
+        if EnvContains[QuizasTieneTipoExplicito] then {
+            out %{Out}% = %{this}%.__type__;
+        }
+        else { if EnvContains[QuizaArray] then { 
+            out %{Out}% = "Array"; 
+        }
+        else {
+            if Syntax["QuizaNumero!=NaN"] then { out %{Out}% = "num"; }
+            else { out %{Out}% = "any"; }
+        } }
+    }
+    //(((exporta un valor fugas osea uno que no es out o un const)))
+    out function %{this}%.export(...:key)
+    {
+        index = 0;
+        for (#Lang.DotDotDot)
+        {
+            Array.GetFrom(Lang.DotDotDot, index, value);
+            out @get[value] = DSyntax[value];
+            index += 1;
+        }
+    }
+}
+//(((File es la estructura de un archivo)))
+out function File.new(this:key, name:str, path:str, content:str)
+{
+    // el tipo
+    out %{this}%.__type__ = "File";
+    //(((el nombre del archivo)))
+    String.new(%{this}%.name, %{name}%);
+    //(((el directorio del archivo)))
+    String.new(%{this}%.path, %{path}%);
+    //(((el contenido del archivo)))
+    String.new(%{this}%.content, %{content}%);
+}
+//(((FileStream sirve para obtener funciones de manejo de archivos y otras cosas mas
+que tienen que ver con archivos)))
+out function FileStream.new(this:key, path:str, directory:Path)
+{
+    // el tipo
+    out %{this}%.__type__ = "FileStream";
+    //(((la carpeta principal la cual se usara para hacer todo lo que viene despues)))
+    out %{this}%.main_path = %{path}%;
+    //(((lee un archivo y retorna su contenido, el primer parametro es el nombre del
+    archivo, el segundo parametro es donde lo retornara)))
+    out function %{this}%.read(file:str, Out:key)
+    {
+        // obtener nombre del archivo
+        %{directory}%.join(%{this}%.main_path, %{file}%, Sys.__Fname__);
+        // obtenerlo
+        Sys.fread retval
+        out %{Out}% = retval;
+    }
+    //(((lee un archivo en la raizy retorna su contenido, el primer parametro es el nombre 
+    del archivo, el segundo parametro es donde lo retornara)))
+    out function %{this}%.readRoot(file:str, Out:key)
+    {
+        // el nombre del archivo
+        Sys.__Fname__ = %{file}%;
+        // obtenerlo
+        Sys.fread retval
+        out %{Out}% = retval;
+    }
+    //(((verifica si un archivo existe, el primer parametro es el nombre del archivo,
+    el segudno parametro es donde retornara el booleano de si existe o no, retorna
+    true si existe y false si no existe)))
+    out function %{this}%.exists(file:str, Out:key)
+    {
+        // obtener nombre del archivo
+        %{directory}%.join(%{this}%.main_path, %{file}%, Sys.__Fname__);
+        // obtenerlo
+        Sys.fexist retval
+        out %{Out}% = retval;
+    }
+    //(((verifica si un archivo existe, el primer parametro es el nombre del archivo,
+    el segudno parametro es donde retornara el booleano de si existe o no, retorna
+    true si existe y false si no existe)))
+    out function %{this}%.existsRoot(file:str, Out:key)
+    {
+        // el nombre del archivo
+        Sys.__Fname__ = %{file}%;
+        // obtenerlo
+        Sys.fexist retval
+        out %{Out}% = retval;
+    }
+    //(((escribe en un archivo, el primer parametro es el archivo donde escribira,
+    el segundo parametro es el texto a escribir, el tercer parametro es la codificacion)))
+    out function %{this}%.write(file:str, content:str, encode:encode)
+    {
+        // obtener nombre del archivo
+        %{directory}%.join(%{this}%.main_path, %{file}%, Sys.__Fname__);
+        // escribir la variable de la codificacion
+        Sys.__encode__ = %{encode}%;
+        // obtenerlo
+        Sys.fwrite %{content}%
+    }
+    //(((escribe en un archivo, el primer parametro es el archivo donde escribira,
+    el segundo parametro es el texto a escribir, el tercer parametro es la codificacion)))
+    out function %{this}%.writeRoot(file:str, content:str, encode:encode)
+    {
+        // el nombre del archivo
+        Sys.__Fname__ = %{file}%;
+        // escribir la variable de la codificacion
+        Sys.__encode__ = %{encode}%;
+        // obtenerlo
+        Sys.fwrite %{content}% //
+    }
+    //(((crea un directorio, internamente el interprete revisa si el directorio no
+    existe y si existe un archivo con ese nombre tambien lo indica como si no existe, 
+    si es asi lo crea, si no es cierto, no hace nada)))
+    out function %{this}%.MakeDir(folder:str)
+    {
+        // obtener nombre del archivo
+        %{directory}%.join(%{this}%.main_path, %{folder}%, Sys.__Fname__);
+        // crearlo
+        Sys.MkDir "este parametro no es necesario , ni yo se por que lo deje que necesitara un parametro jsjsj"
+    }
+    //(((crea un directorio, internamente el interprete revisa si el directorio no
+    existe y si existe un archivo con ese nombre tambien lo indica como si no existe, 
+    si es asi lo crea pero en la raiz, si no es cierto, no hace nada)))
+    out function %{this}%.MakeDirRoot(folder:str)
+    {
+        // obtener nombre del archivo
+        out Sys.__Fname__ = %{folder}%;
+        // crearlo
+        Sys.MkDir "este parametro no es necesario , ni yo se por que lo deje que necesitara un parametro jsjsj"
+    }
+    //(((obtiene informacion del archivo, el primer parametro es el nombre del archivo,
+    el segundo parametro contiene es donde se retornara la estructura)))
+    out function %{this}%.get(file:str, Out:file)
+    {
+        // crea el archivo
+        File.new(%{Out}%, null, null, null);
+        // obtener contenido del archivo
+        %{this}%.read(%{Out}%.name, %{Out}%.content);
+        // ajustar la carpeta
+        out %{Out}%.path = %{this}%.main_path;
+    }
+    //(((obtiene informacion del archivo en la raiz, el primer parametro 
+    es el nombre del archivo, el segundo parametro contiene es donde se 
+    retornara la estructura)))
+    out function %{this}%.getRoot(file:str, Out:file)
+    {
+        // crea el archivo
+        File.new(%{Out}%, null, null, null);
+        // obtener contenido del archivo
+        %{this}%.readRoot(%{Out}%.name, %{Out}%.content);
+    }
+}
+//(((Span es una estructura que contiene un puntero a una variable
+con nombre)))
+out function Span.new(this:key, var_name:str)
+{
+    //(((el tipo)))
+    out %{this}%.__type__ = "Span";
+    //(((a donde apunta)))
+    out %{this}%.varpointer = %{var_name}%;
+    //(((modificar)))
+    out function %{this}%.set(value:any)
+    {
+        // el valor
+        out @get[%{this}%.varpointer] = %{value}%;
+    }
+    //(((obtener)))
+    out function %{this}%.get(Out:any)
+    {
+        // el valor
+        out %{Out}% = DSyntax[%{this}%.varpointer];
+    }
+}
+//(((ReadOnlySpan es una estructura que contiene un puntero a una variable
+con nombre)))
+out function ReadOnlySpan.new(this:key, var_name:str)
+{
+    //(((el tipo)))
+    out %{this}%.__type__ = "Span";
+    //(((a donde apunta)))
+    out %{this}%.varpointer = %{var_name}%;
+    //(((obtener)))
+    out function %{this}%.get(Out:any)
+    {
+        // el valor
+        out %{Out}% = DSyntax[%{this}%.varpointer];
+    }
+}
+//(((CounterInc crea un contador que cada vez que se obtiene se incrementa en 1
+tambien se puede reiniciar)))
+out function CounterInc.new(this:key)
+{
+    //(((el contador)))
+    out %{this}%.counter = 0;
+    //(((obtiene el contador)))
+    out function %{this}%.get(var:key) { out %{var}% = %{this}%.counter; out %{this}%.counter += 1; }
+    //(((resetea el contador)))
+    out function %{this}%.reset() { out %{this}%.counter = 0; }
+}
+//(((Colors es una estructura que contiene strings que tienen los codigos de escape de
+sus colores correspondientes en la termina, stdout o cualquier fuente de texto o salida
+que el interprete tenga permitido manipular)))
+out function Colors.new(this:key)
+{
+    // el tipo
+    out %{this}%.__type__ = "Colors";
+    //(((representa el color rojo en la consola/stdout o cualuqier outpud compatible con
+    los ANSI escape codes)))
+    out %{this}%.red = "\k31m";
+    //(((representa el color verde en la consola/stdout o cualuqier outpud compatible con
+    los ANSI escape codes)))
+    out %{this}%.green = "\k32m";
+    //(((representa el color amarillo en la consola/stdout o cualuqier outpud compatible con
+    los ANSI escape codes)))
+    out %{this}%.yellow = "\k33m";
+    //(((representa el color azul en la consola/stdout o cualuqier outpud compatible con
+    los ANSI escape codes)))
+    out %{this}%.blue = "\k34m";
+    //(((representa el color magenta en la consola/stdout o cualuqier outpud compatible con
+    los ANSI escape codes)))
+    out %{this}%.magenta = "\k35m";
+    //(((representa el color cian en la consola/stdout o cualuqier outpud compatible con
+    los ANSI escape codes)))
+    out %{this}%.cyan = "\k36m";
+    //(((representa el color gris en la consola/stdout o cualuqier outpud compatible con
+    los ANSI escape codes)))
+    out %{this}%.gray = "\k37m";
+}
+//(((para imprimir avanzado)))
+out function print(a:any, ...:any)
+{
+    pr_str = %{a}%;
+
+    i = 0;
+    for (#Lang.DotDotDot)
+    {
+        Array.GetFrom(Lang.DotDotDot, i, pr_item);
+
+        pr_str $= pr_item;
+        delete pr_item
+        i += 1;
+    }
+
+    Sys.Out pr_str // imprimirlo
+}
+//(((ejecuta un javascipt unicamente)))
+out function JSEvalOne(script:str)
+{
+    out retc = JavaScript[%{script}%];
+    delete retc
+}
+//(((ejecuta uno o multiples codigos en javascript con eval del lenguaje sin tener que
+asignarlos directamente a una variable)))
+out function JSEval(...:str)
+{
+    i = 0;
+    for (#Lang.DotDotDot)
+    {
+        Array.GetFrom(Lang.DotDotDot, i, code);
+
+        out retc = JavaScript[code];
+
+        delete retc
+        delete code
+        i += 1;
+    }
+}
+//(((Buffer aprovechando JSEval ahora practicamente cualquier funcion de js se puede
+implementar
+option:num puede ser 0=len, 1=str
+...:any si option=0, entonces es la longitud, si option=1, es el string)))
+out function Buffer.new(this:key, option:num, ...:any)
+{
+    //(((el nombre de la variable donde se aloja)))
+    out %{this}%.VarNameContain = "%{this}%_buffer_internal";
+    // condicion del constructor
+    if Syntax["%{option}%==0"] then {
+        //lo hace con longitud?
+        codeam = "globalThis."; codeam $= %{this}%.VarNameContain; codeam $= " = Buffer.alloc\1"; codeam $= Lang.DotDotDot[0]; codeam $= "\2\l";
+        //ejecuta el codigo
+        JSEvalOne(codeam);
+    }
+    else {
+        if Syntax["%{option}%==1"] then {
+            //(((lo hace con strings?)))
+            codeam = "globalThis."; codeam $= %{this}%.VarNameContain; codeam $= " = Buffer.from\1"; codeam $= ScapeJsStr[Lang.DotDotDot[0]]; codeam $= "\2\l";
+            JSEvalOne(codeam);
+        }
+    }
+    //(((estableze una casilla de un buffer)))
+    out function %{this}%.set(index:num, val:unum8)
+    {
+        //hace el comando
+        codeam = "globalThis."; codeam $= %{this}%.VarNameContain; codeam $= "["; codeam $= %{index}%; codeam $= "]"; codeam $= " = "; codeam $= %{val}%; codeam $= "\l";
+        //ejecutarlo
+        JSEvalOne(codeam);
+    }
+    //(((estableze una casilla de un buffer)))
+    out function %{this}%.get(index:num, Out:num)
+    {
+        //hace el comando
+        codeam = "globalThis."; codeam $= %{this}%.VarNameContain; codeam $= "["; codeam $= %{index}%; codeam $= "]";
+        //ejecutarlo
+        out %{Out}% = JavaScript[codeam];
+    }
+    //(((convierte el buffer a string)))
+    out function %{this}%.ToStr(fmt:str, Out:str)
+    {
+        //el comando
+        codeam = "globalThis."; codeam $= %{this}%.VarNameContain; codeam $= ".toString\1"; codeam $= "\c"; codeam $= %{fmt}%; codeam $= "\c"; codeam $= "\2";
+        //retornarlo
+        out %{Out}% = JavaScript[codeam];
+    }
+    //(((obtiene la longitud del buffer)))
+    out function %{this}%.GetLength(Out:num)
+    {
+        //el comando
+        codeam = "globalThis."; codeam $= %{this}%.VarNameContain; codeam $= ".length";
+        //retornarlo
+        out %{Out}% = JavaScript[codeam];
+    }
+    //(((librera el buffer)))
+    out function %{this}%.FreeBuffer()
+    {
+        codeam = "delete globalThis."; codeam $= %{this}%.VarNameContain;
+        JSEvalOne(codeam);
+    }
+}
+//(((la consola instanciada)))
+ConsoleInternal.new(con);
+//(((el sistema actual instanciado para poder acceder a sus funciones)))
+SysInternal.new(Sys);
+//(((la shell actual instanciada)))
+ShellInternal.new(Sys.Shell);
+//(((instancia de los colores de consola)))
+Colors.new(Sys.ConsoleColors);
+//(((Instancia de cosas de directorios)))
+PathFncs.new(Path);
+//(((Instancia de lector de archivos)))
+FileStream.new(fs, Sys.ActualPath, Path);
+//(((Instancia de LangExtended)))
+LangExtended.new(Lang);
+//(((valor boolean falso)))
+Boolean.new(False, "false");
+//(((valor boolean verdadero)))
+Boolean.new(True, "true");
+//(((exportar valor null)))
+Lang.export("null");
+//(((exportar varios)))
+Lang.export("clear");
+//(((exportar version de stdlib)))
+Lang.export("stdlib_ver");

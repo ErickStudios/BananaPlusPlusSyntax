@@ -1,0 +1,68 @@
+// debe incluir las funciones basicas de lectura y escritura
+require fs.writeRoot fs.readRoot;
+// deben haberse definido las funciones otras que se usaran
+require Array.GetFrom Path.join;
+// asignar una carpeta para el dato
+Path.join(Sys.RunPath, "data", store.DataPath);
+//(((funcion para guardar una variable)))
+out function store.saveOne(VarName:str)
+{
+    // crear la carpeta si no existe
+    fs.MakeDirRoot(store.DataPath);
+    // obtener el dato
+    data = DSyntax[%{VarName}%];
+    // unir el nombre
+    Path.join(store.DataPath, %{VarName}%, temp);
+    // escribir el dato
+    fs.writeRoot(temp, data, "utf8");
+    // eliminar temp
+    delete temp //?
+}
+//(((funcion para guardar multiples datos)))
+out function store.save(...:str)
+{
+    // declarar variables
+    len = #Lang.DotDotDot; i = 0;
+    // literar
+    for (len)
+    {
+        // guardarlo
+        Array.GetFrom(Lang.DotDotDot, i, name); store.saveOne(name); delete name i += 1;
+    }
+}
+//(((funcion para cargar una variable)))
+out function store.loadOne(VarName:str)
+{
+    // crear la carpeta si no existe
+    fs.MakeDirRoot(store.DataPath);
+    // unir el nombre
+    Path.join(store.DataPath, %{VarName}%, temp);
+    fs.existsRoot(temp, data_exists);
+    if data_exists then {
+        // eliminar la flag
+        delete data_exists
+        // ver el dato
+        fs.readRoot(temp, temp2);
+        // obtener variable
+        name_internal = %{VarName}%;
+        // asignar
+        out @get[name_internal] = temp2;
+        // eliminar temps
+        delete temp //?
+    }
+    // eliminar la flag
+    delete data_exists
+    delete temp //?
+}
+//(((funcion para cargar multiples datos)))
+out function store.load(...:str)
+{
+    // declarar variables
+    len = #Lang.DotDotDot; i = 0;
+    // literar
+    for (len)
+    {
+        // cargarlo
+        Array.GetFrom(Lang.DotDotDot, i, name); store.loadOne(name); delete name i += 1;
+    }
+}
